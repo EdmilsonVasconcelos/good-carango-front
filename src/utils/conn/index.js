@@ -1,4 +1,4 @@
-const BASEURL = 'https://good-carango-api.herokuapp.com/';
+const BASEURL = 'https://good-carango-api.herokuapp.com';
 const BASEHEADER = { 'Content-Type': 'application/json' };
 const api = (url, options) =>
   fetch(BASEURL + url, {
