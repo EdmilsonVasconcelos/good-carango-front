@@ -4,9 +4,11 @@ const { resolve } = require('path')
 const app = express()
 
 app.use('/',
-    resolve(
-        __dirname,
-        './build'
+    express.static(
+        resolve(
+            __dirname,
+            './build'
+        )
     )
 )
 
