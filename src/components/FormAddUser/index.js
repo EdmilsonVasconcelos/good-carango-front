@@ -9,6 +9,8 @@ import Container from '@material-ui/core/Container';
 import api from '../../utils/conn';
 import AlertMessage from '../AlertMessage';
 
+import useLoading from '../../hooks/useLoading';
+
 import { isValidText } from '../../utils/Validation';
 
 const useStyles = makeStyles(theme => ({
@@ -24,6 +26,7 @@ const useStyles = makeStyles(theme => ({
 
 const FormAddUser = () => {
   const classes = useStyles();
+  const { updateStateLoading } = useLoading();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -74,6 +77,7 @@ const FormAddUser = () => {
   };
 
   const createUser = async user => {
+    updateStateLoading(true);
     await api('/user', {
       method: 'POST',
       body: {
@@ -87,6 +91,7 @@ const FormAddUser = () => {
         setClassAlert('success');
         setMessageAlert('Usuário cadastrado com sucesso!');
         resetFields();
+        updateStateLoading(false);
       })
       .catch(function () {
         setAlert(true);
@@ -94,6 +99,7 @@ const FormAddUser = () => {
         setMessageAlert(
           'Erro ao salvar usuário, entre em contato com os administradores'
         );
+        updateStateLoading(false);
       });
   };
 
