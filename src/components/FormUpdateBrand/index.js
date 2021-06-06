@@ -12,6 +12,7 @@ import AlertMessage from '../AlertMessage';
 import api from '../../utils/conn';
 import { isValidText } from '../../utils/Validation';
 import useToken from '../../hooks/useToken';
+import useLoading from '../../hooks/useLoading';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,6 +36,7 @@ const FormUpdateBrand = () => {
 
   const { token } = useToken();
   const { idBrand } = useParams();
+  const { updateStateLoading } = useLoading();
 
   const [brand, setBrand] = useState('');
 
@@ -43,13 +45,16 @@ const FormUpdateBrand = () => {
   const [classAlert, setClassAlert] = useState('success');
 
   const getBrandByid = async () => {
+    updateStateLoading(true);
     const headers = { Authorization: `Bearer ${token}` };
     await api(`/brand/find?idBrand=${idBrand}`, { method: 'GET', headers })
       .then(response => {
         setBrand(response.name);
+        updateStateLoading(false);
       })
-      .catch(error => {
+      .catch(() => {
         goToListBrands();
+        updateStateLoading(false);
       });
   };
 
@@ -69,6 +74,7 @@ const FormUpdateBrand = () => {
   };
 
   const updateBrand = async brand => {
+    updateStateLoading(true);
     const headers = { Authorization: `Bearer ${token}` };
     await api(`/brand?idBrand=${idBrand}`, {
       method: 'PUT',
@@ -80,6 +86,7 @@ const FormUpdateBrand = () => {
         setClassAlert('success');
         setMessageAlert('Marca editada com sucesso!');
         setBrand('');
+        updateStateLoading(false);
       })
       .catch(() => {
         setAlert(true);
@@ -87,6 +94,7 @@ const FormUpdateBrand = () => {
           'Erro ao salvar marca, entre em contato com os administradores'
         );
         setClassAlert('error');
+        updateStateLoading(false);
       });
   };
 

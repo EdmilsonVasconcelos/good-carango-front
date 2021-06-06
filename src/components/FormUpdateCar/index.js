@@ -15,6 +15,7 @@ import useToken from '../../hooks/useToken';
 import AlertMessage from '../AlertMessage';
 
 import { isValidText } from '../../utils/Validation';
+import useLoading from '../../hooks/useLoading';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,6 +37,7 @@ const FormUpdateCar = () => {
   const classes = useStyles();
   const { token } = useToken();
   const { idCar } = useParams();
+  const { updateStateLoading } = useLoading();
 
   const [brands, setBrands] = useState([]);
   const [idBrand, setBrand] = useState('');
@@ -52,15 +54,19 @@ const FormUpdateCar = () => {
   };
 
   const getBrands = async () => {
+    updateStateLoading(true);
     const headers = { Authorization: `Bearer ${token}` };
 
     await api('/brand', { headers }).then(data => {
+      updateStateLoading(false);
       setBrands(data);
       setBrand(brands[0]?.id || '');
+    }).catch(() => {
+      updateStateLoading(false);
     });
   };
 
-  const handleAddCar = evt => {
+  const handleUpdateCar = evt => {
     evt.preventDefault();
     const isValidBrand = isValidText(idBrand, 1, 55);
     const isValidModel = isValidText(model, 3, 55);
@@ -70,7 +76,7 @@ const FormUpdateCar = () => {
       isValidBrand && isValidModel && isValidYearFabrication && isValidValue;
 
     if (isValidDataToSellCar) {
-      updateVehicle(idBrand, { model, yearFabrication, value });
+      updateCar(idBrand, { model, yearFabrication, value });
     } else {
       setAlert(true);
       setClassAlert('error');
@@ -81,7 +87,8 @@ const FormUpdateCar = () => {
     }
   };
 
-  const updateVehicle = async (idBrand, vehicle) => {
+  const updateCar = async (idBrand, vehicle) => {
+    updateStateLoading(true);
     const headers = { Authorization: `Bearer ${token}` };
     await api(`/vehicle?idVehicle=${idCar}`, {
       method: 'PUT',
@@ -98,6 +105,7 @@ const FormUpdateCar = () => {
         setClassAlert('success');
         setMessageAlert('Veículo alterado com sucesso!');
         resetFields();
+        updateStateLoading(false);
       })
       .catch(function () {
         setAlert(true);
@@ -105,6 +113,7 @@ const FormUpdateCar = () => {
         setMessageAlert(
           'Erro ao editar veículo, entre em contato com os administradores'
         );
+        updateStateLoading(false);
       });
   };
 
@@ -147,7 +156,7 @@ const FormUpdateCar = () => {
         className={classes.root}
         noValidate
         autoComplete="off"
-        onSubmit={handleAddCar}
+        onSubmit={handleUpdateCar}
       >
         <TextField
           id="outlined-select-currency"

@@ -88,7 +88,7 @@ const ListCars = () => {
 
   return (
     <Container maxWidth="md">
-      <TitleWithLink title="Lista de carros" linkRedirect="add-car" />
+      <TitleWithLink title="Lista de carros" linkRedirect={isAuthenticated ?  "add-car" : false} />
 
       {cars.length ? (
         <>
